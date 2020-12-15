@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.flutter_cubos">
    <application
-        android:label="flutter_cubos"
+        android:label="Flutter Cubos"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
