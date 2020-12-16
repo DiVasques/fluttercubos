@@ -7,7 +7,7 @@ class HomeProvider extends BaseController {
   HomeProvider() {
     getPopularMovies();
   }
-  List<String> genreList = ['Ação', 'Aventura', 'Comédia', 'Drama', 'Sci-fi'];
+  int selectedMovieId;
 
   HomeRepository homeRepository = HomeRepository();
   List<Movie> get moviesList => homeRepository.moviesList;

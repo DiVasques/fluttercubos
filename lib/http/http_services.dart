@@ -65,4 +65,43 @@ class HttpServices {
       throw exception;
     }
   }
+
+  static Future<Map<String, dynamic>> getMovieDetails(int movieId) async {
+    String url =
+        apiUrlEndpoint + "/movie/$movieId?api_key=$apiKey&language=pt-BR";
+
+    Map<String, dynamic> responseBody;
+    try {
+      http.Response response = await http.get(url);
+      responseBody = json.decode(response.body);
+      if (response.statusCode == 200) {
+        return responseBody;
+      } else {
+        throw Exception(
+            '${response.statusCode}-${responseBody['status_code']}\n${responseBody['status_message']}');
+      }
+    } catch (exception) {
+      throw exception;
+    }
+  }
+
+  static Future<Map<String, dynamic>> getMovieCastAndCrew(int movieId) async {
+    String url =
+        apiUrlEndpoint + "/movie/$movieId/credits?api_key=$apiKey&language=pt-BR";
+
+    Map<String, dynamic> responseBody;
+    try {
+      http.Response response = await http.get(url);
+      responseBody = json.decode(response.body);
+      if (response.statusCode == 200) {
+        return responseBody;
+      } else {
+        throw Exception(
+            '${response.statusCode}-${responseBody['status_code']}\n${responseBody['status_message']}');
+      }
+    } catch (exception) {
+      throw exception;
+    }
+  }
+
 }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cubos/controllers/home.dart';
+import 'package:flutter_cubos/controllers/base_controller.dart';
+import 'package:flutter_cubos/controllers/movie_details.dart';
 import 'package:flutter_cubos/utils/app_colors.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class MovieDetailsView extends StatelessWidget {
+  final int movieId;
+  MovieDetailsView(this.movieId);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,206 +29,250 @@ class MovieDetailsView extends StatelessWidget {
     final double topPadding = 150;
     final double posterHeight = posterWidth * 1.5;
     final double greyBoxHeight = topPadding + (posterHeight / 2);
-    return Consumer<HomeProvider>(builder: (context, homeProvider, _) {
-      return SingleChildScrollView(
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                SizedBox(height: greyBoxHeight),
-                Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
+    return ChangeNotifierProvider<MovieDetailsProvider>(
+      create: (_) => MovieDetailsProvider(movieId: movieId),
+      child: Consumer<MovieDetailsProvider>(
+          builder: (context, movieDetailsProvider, _) {
+        return movieDetailsProvider.state == ViewState.Busy
+            ? Center(
+                child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppColors.textBlack),
+                  backgroundColor: AppColors.lightGrey,
+                ),
+              )
+            : movieDetailsProvider.state == ViewState.Error
+                ? Center(
+                    child: Text(
+                      movieDetailsProvider.errorMessage,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : SingleChildScrollView(
+                    child: Stack(
+                      alignment: Alignment.topCenter,
                       children: [
                         Column(
+                          mainAxisSize: MainAxisSize.max,
                           children: [
+                            SizedBox(height: greyBoxHeight),
                             Container(
-                              //TODO: dynamic
-                              padding: EdgeInsets.only(
-                                  top: posterHeight / 2 + 30, bottom: 30),
-                              alignment: Alignment.center,
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    color: AppColors.textBlack,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: "7.3", //TODO: rating
-                                      style: TextStyle(
-                                        color: AppColors.accentColor,
-                                        fontSize: 25,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: " / 10",
-                                      style: TextStyle(
-                                        color: AppColors.hintTextColor,
-                                        fontSize: 14,
-                                      ),
+                              color: Colors.white,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: Column(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              top: posterHeight / 2 + 30,
+                                              bottom: 30),
+                                          alignment: Alignment.center,
+                                          child: RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              style: TextStyle(
+                                                fontFamily: 'Montserrat',
+                                                color: AppColors.textBlack,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: movieDetailsProvider
+                                                      .movie.voteAverage
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                    color:
+                                                        AppColors.accentColor,
+                                                    fontSize: 25,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: " / 10",
+                                                  style: TextStyle(
+                                                    color:
+                                                        AppColors.hintTextColor,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            movieDetailsProvider.movie.title
+                                                .toUpperCase(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ), //title
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              top: 15, bottom: 20),
+                                          alignment: Alignment.center,
+                                          child: RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              style: TextStyle(
+                                                fontFamily: 'Montserrat',
+                                                color: AppColors.textBlack,
+                                                fontSize: 12,
+                                              ),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text: "Título Original: ",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                ),
+                                                TextSpan(
+                                                  text: movieDetailsProvider
+                                                      .movie.originalTitle,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            greyBlock(
+                                                text1: "Ano",
+                                                text2: movieDetailsProvider
+                                                    .movie.releaseYear),
+                                            greyBlock(
+                                                text1: "Duração",
+                                                text2: movieDetailsProvider
+                                                    .movie.runtime),
+                                          ],
+                                        ),
+                                        Wrap(
+                                          spacing: 5,
+                                          alignment: WrapAlignment.center,
+                                          children: movieDetailsProvider
+                                              .movie.genres
+                                              .map((genre) =>
+                                                  genderBlock(gender: genre))
+                                              .toList(),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              top: 60, bottom: 10),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "Descrição",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(bottom: 40),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            movieDetailsProvider.movie.overview,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                        expandedGreyBlock(
+                                          text1: "Orçamento",
+                                          text2: movieDetailsProvider
+                                                      .movie.budget ==
+                                                  0
+                                              ? "Informação indisponível"
+                                              : NumberFormat.currency(decimalDigits: 0,
+                                                      symbol: '\$ ')
+                                                  .format(movieDetailsProvider
+                                                      .movie.budget),
+                                        ),
+                                        expandedGreyBlock(
+                                          text1: "Produtoras",
+                                          text2: movieDetailsProvider
+                                              .movie.company,
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              top: 40, bottom: 10),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "Diretor",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            movieDetailsProvider.movie.crew
+                                                .toString()
+                                                .replaceAll(r'[', '')
+                                                .replaceAll(r']', ''),
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              top: 40, bottom: 10),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "Elenco",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(bottom: 100),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            movieDetailsProvider.movie.cast
+                                                .toString()
+                                                .replaceAll(r'[', '')
+                                                .replaceAll(r']', ''),
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Capitã Marvel".toUpperCase(), //TODO: title
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ), //title
-                            Container(
-                              padding: EdgeInsets.only(top: 15, bottom: 20),
-                              alignment: Alignment.center,
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    color: AppColors.textBlack,
-                                    fontSize: 12,
-                                  ),
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: "Título Original: ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w300),
-                                    ),
-                                    TextSpan(
-                                      text:
-                                          "Captain Marvel", //TODO: original title
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                greyBlock(
-                                    text1: "Ano", text2: "2019"), //TODO: year
-                                greyBlock(
-                                    text1: "Duração",
-                                    text2: "1h 20min"), //TODO: duration
-                              ],
-                            ),
-                            Wrap(
-                              spacing: 5,
-                              alignment: WrapAlignment.center,
-                              children: [
-                                genderBlock(gender: "Ação"), //TODO: map genders
-                                genderBlock(gender: "Aventura"),
-                                genderBlock(gender: "Sci-fi"),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 60, bottom: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Descrição",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(bottom: 40),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                //TODO: description
-                                "Aventura sobre Carol Danvers, uma agente da CIA que tem contato com uma raça alienígena e ganha poderes sobre-humanos. Entre os seus poderes estão uma força fora do comum e a habilidade de voar.",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            expandedGreyBlock(
-                              text1: "Orçamento",
-                              text2: "\$ 152,000,000", //TODO: budget
-                            ),
-                            expandedGreyBlock(
-                              text1: "Produtoras",
-                              text2: "Marvel studios", //TODO: company
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 40, bottom: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Diretor",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                //TODO: director
-                                "Ryan Fleck, Anna Boden",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 40, bottom: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Elenco",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(bottom: 100),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                //TODO: cast
-                                "Brie Larson, Samuel L. Jackson, Ben Mendelsohn, Djimon Hounsou, Lee Pace",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                           ],
                         ),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: topPadding,
+                            ),
+                            posterCard(
+                              cardHeight: posterHeight,
+                              cardWidth: posterWidth,
+                              posterUrl: movieDetailsProvider.movie.posterUrl,
+                            )
+                          ],
+                        ),
                       ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                SizedBox(
-                  height: topPadding,
-                ),
-                posterCard(
-                    cardHeight: posterHeight,
-                    cardWidth: posterWidth,
-                    posterUrl:
-                        "https://image.tmdb.org/t/p/original/AtsgWhDnHTq68L0lLsUrCnM7TjG.jpg")
-              ],
-            ),
-          ],
-        ),
-      );
-    });
+                  );
+      }),
+    );
   }
 
   Widget greyBlock({String text1, String text2}) {
@@ -292,29 +340,27 @@ class MovieDetailsView extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
           color: AppColors.lightGrey, borderRadius: BorderRadius.circular(5)),
-      child: Expanded(
-        child: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            style: TextStyle(
-                fontFamily: 'Montserrat', fontWeight: FontWeight.w600),
-            children: <TextSpan>[
-              TextSpan(
-                text: "$text1: ".toUpperCase(),
-                style: TextStyle(
-                  color: AppColors.hintTextColor,
-                  fontSize: 12,
-                ),
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style:
+              TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.w600),
+          children: <TextSpan>[
+            TextSpan(
+              text: "$text1: ".toUpperCase(),
+              style: TextStyle(
+                color: AppColors.hintTextColor,
+                fontSize: 12,
               ),
-              TextSpan(
-                text: text2,
-                style: TextStyle(
-                  color: AppColors.textBlack,
-                  fontSize: 14,
-                ),
+            ),
+            TextSpan(
+              text: text2,
+              style: TextStyle(
+                color: AppColors.textBlack,
+                fontSize: 14,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -341,7 +387,10 @@ class MovieDetailsView extends StatelessWidget {
               SizedBox(width: 5),
               Text(
                 "Voltar",
-                style: TextStyle(color: AppColors.hintTextColor, fontSize: 14, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                    color: AppColors.hintTextColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
               ),
             ],
           ),

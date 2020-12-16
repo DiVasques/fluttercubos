@@ -8,7 +8,7 @@ import 'package:flutter_cubos/views/movie_details.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
-  static const String movieDetailsRoute = '/movieDetails';  
+  static const String movieDetailsRoute = '/movieDetails';
 
   final GlobalKey<NavigatorState> homeNavigatorKey =
       GlobalKey<NavigatorState>();
@@ -31,7 +31,7 @@ class HomeView extends StatelessWidget {
           onGenerateRoute: (settings) {
             if (settings.name == movieDetailsRoute) {
               return MaterialPageRoute(
-                  builder: (context) => MovieDetailsView());
+                  builder: (context) => MovieDetailsView(settings.arguments));
             } else {
               return MaterialPageRoute(
                 builder: (context) {
@@ -140,7 +140,9 @@ class HomeView extends StatelessWidget {
                       title: movie.title,
                       genres: movie.genres),
                   onTap: () {
-                    homeNavigatorKey.currentState.pushNamed(movieDetailsRoute);
+                    homeProvider.selectedMovieId = movie.id;
+                    homeNavigatorKey.currentState
+                        .pushNamed(movieDetailsRoute, arguments: movie.id);
                   },
                 ),
               ),
