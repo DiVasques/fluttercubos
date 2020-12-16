@@ -1,7 +1,9 @@
+import 'package:flutter_cubos/http/http_services.dart';
+
 class Movie {
   final bool adult;
   final String backdropPath;
-  final List<int> genreIds;
+  final List<dynamic> genreIds;
   final int id;
   final String originalLang;
   final String originalTitle;
@@ -15,9 +17,10 @@ class Movie {
   final double voteAverage;
   final int voteCount;
   List<String> genres;
+  final String posterUrl;
 
   Movie.fromJson(
-      Map<String, dynamic> json, List<Map<String, dynamic>> _genresIdList)
+      Map<String, dynamic> json, List<dynamic> _genresIdList)
       : adult = json['adult'],
         backdropPath = json['backdrop_path'],
         genreIds = json['genre_ids'],
@@ -27,6 +30,8 @@ class Movie {
         overview = json['overview'],
         popularity = json['popularity'],
         posterPath = json['poster_path'],
+        posterUrl =
+            "https://image.tmdb.org/t/p/original" + json['poster_path'],
         releaseDate = json['release_date'],
         releaseYear = json['release_date'].split('-')[0],
         title = json['title'],
