@@ -18,7 +18,7 @@ class MovieCard extends StatelessWidget {
       width: screenWidth,
       decoration: BoxDecoration(
         color: Colors.black,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black,
@@ -28,7 +28,7 @@ class MovieCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(12),
           child: Stack(
             children: [
               FadeInImage.memoryNetwork(

@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cubos/controllers/home.dart';
 import 'package:flutter_cubos/utils/app_colors.dart';
 import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class MovieDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double greyBoxHeight = screenHeight;
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
       body: Stack(
@@ -20,15 +19,21 @@ class MovieDetailsView extends StatelessWidget {
   }
 
   Widget movieInfo(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double posterHorizontalPadding = 77.5;
+    final double posterWidth = screenWidth - posterHorizontalPadding * 2;
+    final double topPadding = 150;
+    final double posterHeight = posterWidth * 1.5;
+    final double greyBoxHeight = topPadding + (posterHeight / 2);
     return Consumer<HomeProvider>(builder: (context, homeProvider, _) {
       return SingleChildScrollView(
         child: Stack(
+          alignment: Alignment.topCenter,
           children: [
             Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                //TODO: make dynamic in sync with images height
-                SizedBox(height: 250),
+                SizedBox(height: greyBoxHeight),
                 Container(
                   color: Colors.white,
                   child: Padding(
@@ -38,7 +43,9 @@ class MovieDetailsView extends StatelessWidget {
                         Column(
                           children: [
                             Container(
-                              padding: EdgeInsets.only(top: 100, bottom: 30),
+                              //TODO: dynamic
+                              padding: EdgeInsets.only(
+                                  top: posterHeight / 2 + 30, bottom: 30),
                               alignment: Alignment.center,
                               child: RichText(
                                 textAlign: TextAlign.center,
@@ -202,6 +209,18 @@ class MovieDetailsView extends StatelessWidget {
                 ),
               ],
             ),
+            Column(
+              children: [
+                SizedBox(
+                  height: topPadding,
+                ),
+                posterCard(
+                    cardHeight: posterHeight,
+                    cardWidth: posterWidth,
+                    posterUrl:
+                        "https://image.tmdb.org/t/p/original/AtsgWhDnHTq68L0lLsUrCnM7TjG.jpg")
+              ],
+            ),
           ],
         ),
       );
@@ -322,7 +341,7 @@ class MovieDetailsView extends StatelessWidget {
               SizedBox(width: 5),
               Text(
                 "Voltar",
-                style: TextStyle(color: AppColors.hintTextColor, fontSize: 14),
+                style: TextStyle(color: AppColors.hintTextColor, fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -330,6 +349,26 @@ class MovieDetailsView extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
           ),
           color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget posterCard(
+      {String posterUrl, @required cardHeight, @required cardWidth}) {
+    return Container(
+      height: cardHeight,
+      width: cardWidth,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: FadeInImage.memoryNetwork(
+          image: posterUrl,
+          fit: BoxFit.cover,
+          placeholder: kTransparentImage,
         ),
       ),
     );
