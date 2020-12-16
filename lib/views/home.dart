@@ -4,9 +4,12 @@ import 'package:flutter_cubos/controllers/home.dart';
 import 'package:flutter_cubos/repositories/models/movie.dart';
 import 'package:flutter_cubos/utils/app_colors.dart';
 import 'package:flutter_cubos/utils/widgets/movie_card.dart';
+import 'package:flutter_cubos/views/movie_details.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
+  static const String movieDetailsRoute = '/movieDetails';  
+
   final GlobalKey<NavigatorState> homeNavigatorKey =
       GlobalKey<NavigatorState>();
   final TextEditingController searchFormFieldController =
@@ -26,8 +29,9 @@ class HomeView extends StatelessWidget {
         child: Navigator(
           key: homeNavigatorKey,
           onGenerateRoute: (settings) {
-            if (settings.name == 'any route') {
-              return MaterialPageRoute(builder: (context) => Container());
+            if (settings.name == movieDetailsRoute) {
+              return MaterialPageRoute(
+                  builder: (context) => MovieDetailsView());
             } else {
               return MaterialPageRoute(
                 builder: (context) {
@@ -105,9 +109,7 @@ class HomeView extends StatelessWidget {
                                     )
                                   : Expanded(
                                       child: SingleChildScrollView(
-                                        child: Column(
-                                          children: [buildMovieCard(context)],
-                                        ),
+                                        child: buildMovieCard(context),
                                       ),
                                     ),
                             ],
@@ -137,6 +139,9 @@ class HomeView extends StatelessWidget {
                       posterUrl: movie.posterUrl,
                       title: movie.title,
                       genres: movie.genres),
+                  onTap: () {
+                    homeNavigatorKey.currentState.pushNamed(movieDetailsRoute);
+                  },
                 ),
               ),
             )

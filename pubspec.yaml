@@ -70,6 +70,8 @@ flutter:
         - asset: assets/fonts/Montserrat-Regular.ttf
         - asset: assets/fonts/Montserrat-Bold.ttf
           weight: 700
+        - asset: assets/fonts/Montserrat-SemiBold.ttf
+          weight: 600
         - asset: assets/fonts/Montserrat-Thin.ttf
           weight: 200
         - asset: assets/fonts/Montserrat-Light.ttf

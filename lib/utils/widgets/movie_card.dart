@@ -17,7 +17,7 @@ class MovieCard extends StatelessWidget {
       height: cardHeight,
       width: screenWidth,
       decoration: BoxDecoration(
-        color: AppColors.hintTextColor,
+        color: Colors.black,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -31,13 +31,6 @@ class MovieCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           child: Stack(
             children: [
-              Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(AppColors.textBlack),
-                  backgroundColor: AppColors.lightGrey,
-                ),
-              ),
               FadeInImage.memoryNetwork(
                 image: posterUrl,
                 fit: BoxFit.cover,

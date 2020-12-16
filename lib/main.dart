@@ -16,11 +16,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Cubos',
       onGenerateRoute: MainRouter.generateRoute,
       initialRoute: homeRoute,
-      
       theme: ThemeData(
         accentColor: AppColors.accentColor,
         iconTheme: IconThemeData(color: AppColors.accentColor),
-        fontFamily: 'Montserrat'
+        fontFamily: 'Montserrat',
       ),
     );
   }
