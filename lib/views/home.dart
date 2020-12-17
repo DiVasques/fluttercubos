@@ -108,9 +108,7 @@ class HomeView extends StatelessWidget {
                                       ),
                                     )
                                   : Expanded(
-                                      child: SingleChildScrollView(
-                                        child: buildMovieCard(context),
-                                      ),
+                                      child: buildMovieCardList(context),
                                     ),
                             ],
                           );
@@ -127,28 +125,30 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget buildMovieCard(BuildContext context) {
-    return Consumer<HomeProvider>(builder: (context, homeProvider, _) {
-      return Column(
-        children: homeProvider.moviesList
-            .map(
-              (Movie movie) => Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: GestureDetector(
-                  child: MovieCard(
-                      posterUrl: movie.posterUrl,
-                      title: movie.title,
-                      genres: movie.genres),
-                  onTap: () {
-                    homeProvider.selectedMovieId = movie.id;
-                    homeNavigatorKey.currentState
-                        .pushNamed(movieDetailsRoute, arguments: movie.id);
-                  },
-                ),
+  Widget buildMovieCardList(BuildContext context) {
+    return Consumer<HomeProvider>(
+      builder: (context, homeProvider, _) {
+        return ListView.builder(
+          itemCount: homeProvider.moviesList.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: GestureDetector(
+                child: MovieCard(
+                    posterUrl: homeProvider.moviesList[index].posterUrl,
+                    title: homeProvider.moviesList[index].title,
+                    genres: homeProvider.moviesList[index].genres),
+                onTap: () {
+                  homeProvider.selectedMovieId =
+                      homeProvider.moviesList[index].id;
+                  homeNavigatorKey.currentState.pushNamed(movieDetailsRoute,
+                      arguments: homeProvider.moviesList[index].id);
+                },
               ),
-            )
-            .toList(),
-      );
-    });
+            );
+          },
+        );
+      },
+    );
   }
 }
