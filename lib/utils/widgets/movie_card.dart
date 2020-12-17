@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cubos/utils/app_colors.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -31,10 +32,12 @@ class MovieCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           child: Stack(
             children: [
-              FadeInImage.memoryNetwork(
-                image: posterUrl,
+              FadeInImage(
+                image: CachedNetworkImageProvider(
+                  posterUrl,
+                ),
                 fit: BoxFit.cover,
-                placeholder: kTransparentImage,
+                placeholder: MemoryImage(kTransparentImage),
               ),
               Container(
                 decoration: BoxDecoration(

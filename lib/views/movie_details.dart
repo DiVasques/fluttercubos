@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cubos/controllers/base_controller.dart';
 import 'package:flutter_cubos/controllers/movie_details.dart';
@@ -189,7 +190,8 @@ class MovieDetailsView extends StatelessWidget {
                                                       .movie.budget ==
                                                   0
                                               ? "Informação indisponível"
-                                              : NumberFormat.currency(decimalDigits: 0,
+                                              : NumberFormat.currency(
+                                                      decimalDigits: 0,
                                                       symbol: '\$ ')
                                                   .format(movieDetailsProvider
                                                       .movie.budget),
@@ -414,10 +416,12 @@ class MovieDetailsView extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: FadeInImage.memoryNetwork(
-          image: posterUrl,
+        child: FadeInImage(
+          image: CachedNetworkImageProvider(
+            posterUrl,
+          ),
           fit: BoxFit.cover,
-          placeholder: kTransparentImage,
+          placeholder: MemoryImage(kTransparentImage),
         ),
       ),
     );
