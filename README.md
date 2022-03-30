@@ -1,16 +1,12 @@
 # flutter_cubos
 
-A new Flutter project.
+A movielover application.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is a basic app that shows new and highlighted movies, using themoviedb API.
+It was created as a challenge for a hiring process, and consists of a scrollable home page, that shows the top movies, and a movie details screen.
 
-A few resources to get you started if this is your first Flutter project:
+Main characteristics are state management using Providers, well designed architecture, using repository controller service, dynamic listview building and image caching.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Author: Diogo Vasques
